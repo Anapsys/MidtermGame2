@@ -12,9 +12,45 @@ def updatePosition():
             
 def findEntityAt(x, y):
     for Element in NPCs:
-        if (Element._posX == x and Element._posY == x):
+        if (Element._posX == x and Element._posY == y):
             return Element
     return None
+
+def lookAround(x, y):
+    entity = None
+    entity = findEntityAt(x+1, y)
+    if entity:
+        print("To the east: a " + entity._name)
+        
+    entity = findEntityAt(x+1, y+1)
+    if entity:
+        print("To the northeast: a " + entity._name)
+        
+    entity = findEntityAt(x, y+1)
+    if entity:
+        print("To the north: a " + entity._name)
+        
+    entity = findEntityAt(x-1, y+1)
+    if entity:
+        print("To the northwest: a " + entity._name)
+        
+    entity = findEntityAt(x-1, y)
+    if entity:
+        print("To the west: a " + entity._name)
+        
+    entity = findEntityAt(x-1, y-1)
+    if entity:
+        print("To the southwest: a " + entity._name)
+        
+    entity = findEntityAt(x, y-1)
+    if entity:
+        print("To the south: a " + entity._name)
+        
+    entity = findEntityAt(x+1, y-1)
+    if entity:
+        print("To the southeast: a " + entity._name)
+
+    entity = None
 
 class Entity(object):
     _name = "DEFAULT"
@@ -112,3 +148,9 @@ if __name__ == '__main__':
                 logging.debug('No entity found at current position.')
                 print("You wildly swing your sword for no reason!")
                 print("The air takes 1 damage. It has 985027507289520965283698725390008083274 health left.")
+
+        elif command == "look":
+            try:
+                lookAround(Player1._posX, Player1._posY)
+            except:
+                logging.debug('Looking failure????')
