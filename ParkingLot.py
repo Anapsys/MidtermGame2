@@ -5,6 +5,9 @@ import logging
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+def tutorial():
+    print("Commands: N, E, S, W, look, talk, attack, ?")
+
 def updatePosition():
     for Element in NPCs:
         if (Element._posX == Player1._posX and Element._posY == Player1._posY):
@@ -17,7 +20,6 @@ def findEntityAt(x, y):
     return None
 
 def lookAround(x, y):
-    entity = None
     entity = findEntityAt(x+1, y)
     if entity:
         print("To the east: a " + entity._name)
@@ -50,8 +52,6 @@ def lookAround(x, y):
     if entity:
         print("To the southeast: a " + entity._name)
 
-    entity = None
-
 class Entity(object):
     _name = "DEFAULT"
     _posX = 5
@@ -59,13 +59,11 @@ class Entity(object):
     _command = ""
     _attack = 2
     _defense = 1
-    _health = 10
+    _health = 4
     def __init__(self, x, y, name):
         self._posX = x
         self._posY = y
         self._name = name
-        #self.main()
-    #def main(self):
     def getCommand(self):
         self._command = input("> ").lower()
         return self._command
@@ -97,10 +95,17 @@ class Entity(object):
             self._posX -= 1
             print("Moved west. X = " + str(self._posX))
             return
+    def update(self):
+        if self._health <= 0:
+            self.die()
     def damage(self, instigator):
         self._health -= (instigator._attack - self._defense)
         print(self._name + " took " + str(instigator._attack - self._defense) + " damage!")
         print(self._name + " has " + str(self._health) + " health left.")
+    def die(self):
+        print("ARG YOU HAVE BESTED ME")
+        logging.critical('CRITICAL SYSTEM FAILURE DELETING SYSTEM 32')
+        print(self._name + " has died.")
 
 ###
 #EXECUTION
@@ -118,9 +123,16 @@ Other = None
 if __name__ == '__main__':
     command = ""
     Player1 = Entity(5, 5, input("Choose your name: "))
+    tutorial()
     
     while 1:
         Other = None
+        Player1.update()
+        for NPC in NPCs:
+            NPC.update()
+            if (NPC._health <= 0):
+                NPCs.remove(NPC)
+            
         updatePosition()
         command = Player1.getCommand()
 
@@ -154,3 +166,5 @@ if __name__ == '__main__':
                 lookAround(Player1._posX, Player1._posY)
             except:
                 logging.debug('Looking failure????')
+        elif command == "?":
+            tutorial()
